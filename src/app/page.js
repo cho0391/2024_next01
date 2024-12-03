@@ -7,6 +7,7 @@ import img01 from "/public/images/car2.jpg";
 
 // 자식 컴포넌트 
 // 하지만 부모컴포넌트는 없어도 되고, 자식컴포넌트는 없으면 안된다.
+import ItemList from './itemList/page'
 export default function Home() {
   return (
     // 해당 내용은 부모컴포넌트(layout.js)의 props {children} 에 삽입된다.
@@ -16,6 +17,7 @@ export default function Home() {
       {/* <p><Image src="/images/car1.jpg" alt="" width={350} height={200}/></p> */}
       {/* 너비, 높이는 선택사항 */}
       {/* <p><Image src={img01} alt="" width={350} height={200}/></p> */}
+      <ItemList />
     </>
   );
 }
