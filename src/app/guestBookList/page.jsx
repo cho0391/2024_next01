@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import './guestBookList.css';
+import useAuthStore from '../../../store/authStore';
 
 function Page(props) {
   const LOCAL_API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL
@@ -13,7 +14,7 @@ function Page(props) {
   const [error, setError] = useState(null); // 에러 상태
   // const API_URL = "http://localhost:8080/api/guestbook/list";
   const API_URL = `${LOCAL_API_BASE_URL}/guestbook/list`;
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  const {isAuthenticated, token} = useAuthStore();
 
   // 데이터 가져오기
   const getData = async () => {
