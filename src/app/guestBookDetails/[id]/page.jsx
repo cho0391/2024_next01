@@ -4,7 +4,7 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableRow } 
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import './guestBookDetails.css'
-import useAuthStore from '../../../../store/authStore';
+import  useAuthStore from '../../../../store/authStore';
 import { useRouter } from 'next/navigation';
 
 
@@ -14,7 +14,7 @@ function Page({ params }) {
     const [item, setItem] = useState(null);       // 데이터 상태
     const [loading, setLoading] = useState(true); // 로딩 상태
     const [error, setError] = useState(null);     // 에러 상태
-    const { isAuthenticated, token } = useAuthStore();       // 로그인 상태
+    const { isAuthenticated, token, user } = useAuthStore();       // 로그인 상태
     const router = useRouter();
 
     useEffect(() => {
@@ -91,6 +91,8 @@ function Page({ params }) {
             </div>
         );
     }
+    // 글 작성자와 현재 로그인한 사용자 비교
+    const isOwner = isAuthenticated && String(user.m_id) === String(item.gb_id);
 
     // 로딩 완료 후
     return (
@@ -124,22 +126,25 @@ function Page({ params }) {
                             <TableRow>
                                 <TableCell className="table-cell">Image</TableCell>
                                 <TableCell className="table-cell">
-                                    {isAuthenticated ? (<a
-                                    href={`${LOCAL_API_BASE_URL}/guestbook/download/${item.gb_filename}`} // Spring Boot 다운로드 URL
-                                    download={item.gb_filename} // 다운로드 파일 이름 지정
-                                    target='_blank' // 새탭에서 열림
-                                    rel='noopener noreferrer' // 보안 향상을 위해 추가
-                                    > 
-                                        <img 
-                                        src={`${LOCAL_IMG_URL}/${item.gb_filename}`} 
-                                        alt='Uploaded Image'
-                                        style={{ width: '150px' }} />
-                                        </a>) : 
-                                    (<img 
+                                   {isOwner? (<>
+                                   <img 
                                     src={`${LOCAL_IMG_URL}/${item.gb_filename}`} 
-                                    alt='Uploaded Image'
-                                    style={{ width: '150px' }} />)}
-                                    
+                                    alt='image' 
+                                    style={{width:'150px', cursor:'pointer', marginRight:'10px'}} />
+                                   <a 
+                                   href={`${LOCAL_IMG_URL}/guestbook/download/${item.gb_filename}`}
+                                   download={item.gb_filename}
+                                   target='_blank'
+                                   rel='noopener noreferrer'
+                                   style={{textDecoration:'none', color:'#007bff'}}
+                                   > 다운로드 </a>
+                                   </>):(<>
+                                    <img 
+                                    src={`${LOCAL_IMG_URL}/${item.gb_filename}`} 
+                                    alt='image' 
+                                    style={{width:'150px', cursor:'pointer', marginRight:'10px'}} />
+                                    <span>다운로드 권한 없음</span>
+                                   </>)}
                                 </TableCell>
                             </TableRow>
                         )}
@@ -150,14 +155,14 @@ function Page({ params }) {
                 <Button variant='contained'
                     color='primary'
                     onClick={handleUpdate}
-                    disabled={!isAuthenticated}
+                    disabled={!isOwner}
                 >수정</Button>
 
                 <Button variant='contained'
                     color='error'
                     onClick={handleDelete}
                     style={{ marginLeft: "10px" }}
-                    disabled={!isAuthenticated}
+                    disabled={!isOwner}
                 >삭제</Button>
             </div>
         </>
